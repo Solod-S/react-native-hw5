@@ -3,6 +3,7 @@ import { MaterialIcons, Foundation, FontAwesome } from "@expo/vector-icons";
 import { Camera, CameraType } from "expo-camera";
 import { useIsFocused } from "@react-navigation/native";
 import * as Location from "expo-location";
+import Spinner from "react-native-loading-spinner-overlay";
 import {
   Text,
   View,
@@ -28,6 +29,7 @@ const initialState = {
 export default function CreateScreen({ navigation }) {
   //location
   const [location, setLocation] = useState({});
+  const [region, setregion] = useState({});
   const [permission, requestPermission] = Camera.useCameraPermissions();
 
   //camera
@@ -38,6 +40,8 @@ export default function CreateScreen({ navigation }) {
   const [type, setType] = useState(CameraType.front);
 
   //other
+  const [loading, setLoading] = useState(false);
+
   const [post, setPost] = useState(initialState);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const [dimensions, setdimensions] = useState(
@@ -45,7 +49,9 @@ export default function CreateScreen({ navigation }) {
   );
   const redyToPost = photo && post.location && post.title;
   const redyToDell = photo || post.location || post.title;
+
   useEffect(() => {
+    console.log(`region`, region);
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
@@ -83,7 +89,7 @@ export default function CreateScreen({ navigation }) {
       keyboardDidHideListener.remove();
       keyboardDidShowListener.remove();
     };
-  }, [photo]);
+  }, [photo, loading, region]);
 
   const keyboardHide = () => {
     setKeyboardVisible(false);
@@ -95,11 +101,34 @@ export default function CreateScreen({ navigation }) {
   };
 
   const takePicture = async () => {
-    try {
+    const makePhoto = async () => {
       let { uri } = await camera.takePictureAsync();
-      let location = await Location.getCurrentPositionAsync({});
       setPhoto(uri);
+    };
+
+    const takeLocation = async () => {
+      let location = await Location.getCurrentPositionAsync({});
       setLocation(location.coords);
+
+      const regionData = await Location.reverseGeocodeAsync({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+      // setregion({
+      //   city: regionData.city,
+      //   country: regionData.country,
+      //   isoCountryCode: regionData.isoCountryCode,
+      // });
+      setregion(regionData[0]);
+
+      setLoading(false);
+    };
+    try {
+      setLoading(true);
+      makePhoto();
+      takeLocation();
+      // getLocation();
+      console.log(`loading`, loading);
     } catch (error) {
       console.log(error);
     }
@@ -117,6 +146,7 @@ export default function CreateScreen({ navigation }) {
     });
 
     setPhoto(null);
+    setregion({});
     setLocation(null);
     setPost(initialState);
   };
@@ -124,6 +154,7 @@ export default function CreateScreen({ navigation }) {
   const onDell = () => {
     setPhoto(null);
     setLocation(null);
+    setregion({});
     setPost(initialState);
     navigation.navigate("DefaultPostsScreen");
   };
@@ -149,7 +180,17 @@ export default function CreateScreen({ navigation }) {
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={{ ...styles.container, width: dimensions + 16 * 2 }}>
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={{ marginBottom: 8 }}>
+          <Spinner
+            //visibility of Overlay Loading Spinner
+            size="large"
+            color="orange"
+            visible={loading}
+            //Text with the Spinner
+            textContent={"Loading..."}
+            //Text style of the Spinner Text
+            textStyle={styles.spinnerTextStyle}
+          />
+          <View style={{ marginBottom: 8, fontSize: 22 }}>
             {!isKeyboardVisible && (
               <>
                 {isFocused && (
@@ -185,7 +226,10 @@ export default function CreateScreen({ navigation }) {
                           <TouchableOpacity
                             activeOpacity={0.6}
                             style={styles.dellPhotoBtn}
-                            onPress={() => setPhoto(null)}
+                            onPress={() => {
+                              setPhoto(null);
+                              setregion({});
+                            }}
                           >
                             <Foundation name="trash" size={20} color="grey" />
                           </TouchableOpacity>
@@ -223,8 +267,12 @@ export default function CreateScreen({ navigation }) {
                 />
               </View>
               <View style={{ marginBottom: 32, position: "relative" }}>
-                <TextInput
-                  placeholder="Местность..."
+                {/* <TextInput
+                  placeholder={
+                    region.length > 0
+                      ? `${region.country},  ${region.city}`
+                      : "Местность"
+                  }
                   value={post.location}
                   style={styles.input}
                   textAlign={"left"}
@@ -235,10 +283,16 @@ export default function CreateScreen({ navigation }) {
                       location: value,
                     }))
                   }
-                />
+                /> */}
+                {region && (
+                  <Text>
+                    {region.country}, {region.city}
+                  </Text>
+                )}
               </View>
             </View>
           </KeyboardAvoidingView>
+
           {!isKeyboardVisible && (
             <>
               <TouchableOpacity
@@ -392,5 +446,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#F6F6F6",
     borderRadius: 20,
+  },
+  spinnerTextStyle: {
+    color: "orange",
   },
 });

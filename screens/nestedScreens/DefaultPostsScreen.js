@@ -28,15 +28,14 @@ export default function DefaultPostsScreen({ navigation, route }) {
   );
 
   const { name, email } = profile;
-  console.log(route.params);
+
   useEffect(() => {
     if (route.params) {
-      console.log("111");
       setPosts((prevState) => [...prevState, route.params]);
     }
     const onChange = () => {
       const width = Dimensions.get("window").width - 16 * 2;
-      console.log(width);
+
       setdimensions(width);
     };
     const dimensionsHandler = Dimensions.addEventListener("change", onChange);

@@ -4,6 +4,7 @@ import {
   MapScreen,
   CommentsScreen,
 } from "../nestedScreens";
+import { TouchableOpacity, Image } from "react-native";
 
 const NestedScreen = createStackNavigator();
 

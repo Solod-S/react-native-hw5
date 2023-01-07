@@ -25,8 +25,6 @@ const initialState = {
 //images
 const imageBG = require("../../assets/images/screenBg.jpg");
 
-
-
 export default function LoginScreen({ navigation }) {
   const [showPass, setShowPass] = useState(false);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
@@ -71,8 +69,7 @@ export default function LoginScreen({ navigation }) {
   const keyboardHide = () => {
     setKeyboardVisible(false);
     Keyboard.dismiss();
-    console.log(state);
-    setState(initialState);
+    // setState(initialState);
   };
 
   const toglePass = () => {
