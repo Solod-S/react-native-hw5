@@ -7,7 +7,7 @@ import screens from "../screens";
 const { CreateScreen, PostsScreen, ProfileScreen } = screens;
 
 //icons
-const backIcon = require("../assets/icon/arrow-left.png");
+
 const LogOutIcon = require("../assets/icon/log-out.png");
 
 const MainTab = createBottomTabNavigator();

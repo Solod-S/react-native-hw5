@@ -113,7 +113,7 @@ export default function ProfileScreen({ navigation }) {
                 key={id}
                 title={title}
                 image={image}
-                coments={comments}
+                comments={comments}
                 location={location}
                 like={like}
               />
@@ -131,7 +131,7 @@ export default function ProfileScreen({ navigation }) {
                 key={id}
                 title={title}
                 image={image}
-                coments={comments}
+                comments={comments}
                 location={location}
                 like={like}
               />

@@ -1,10 +1,6 @@
-import { LoginScreen, RegistrationScreen } from "./auth";
-import {
-  CreateScreen,
-  PostsScreen,
-  ProfileScreen,
-  ComentsScreen,
-} from "./mainScreens";
+import { LoginScreen, RegistrationScreen } from "./authScreens";
+import { CreateScreen, PostsScreen, ProfileScreen } from "./mainScreens";
+import { CommentsScreen, MapScreen, DefaultPostsScreen } from "./nestedScreens";
 
 const screens = {
   LoginScreen,
@@ -12,6 +8,8 @@ const screens = {
   CreateScreen,
   PostsScreen,
   ProfileScreen,
-  ComentsScreen,
+  CommentsScreen,
+  MapScreen,
+  DefaultPostsScreen,
 };
 export default screens;
