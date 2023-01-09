@@ -19,7 +19,6 @@ const MainTab = createBottomTabNavigator();
 
 export default function Home({ navigation }) {
   const { currentPath } = useContext(Context);
-  console.log(currentPath);
 
   return (
     <MainTab.Navigator

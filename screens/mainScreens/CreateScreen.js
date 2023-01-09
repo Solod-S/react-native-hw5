@@ -1,6 +1,11 @@
 import { useState, useEffect } from "react";
-import { MaterialIcons, Foundation, FontAwesome } from "@expo/vector-icons";
-import { Camera, CameraType } from "expo-camera";
+import {
+  MaterialIcons,
+  Foundation,
+  FontAwesome,
+  Ionicons,
+} from "@expo/vector-icons";
+import { Camera, CameraType, FlashMode } from "expo-camera";
 import { useIsFocused } from "@react-navigation/native";
 import * as Location from "expo-location";
 import Spinner from "react-native-loading-spinner-overlay";
@@ -19,6 +24,7 @@ import {
   ScrollView,
   ImageBackground,
 } from "react-native";
+import { v4 as uuidv4 } from "uuid";
 
 //stateSchema
 const initialState = {
@@ -36,7 +42,8 @@ export default function CreateScreen({ navigation }) {
   const [photo, setPhoto] = useState(null);
   const [isCameraReady, setIsCameraReady] = useState(false);
   const isFocused = useIsFocused();
-  const [type, setType] = useState(CameraType.front);
+  const [cameraType, setCameraType] = useState(CameraType.back);
+  const [flashMode, setFlashMode] = useState(FlashMode.on);
 
   //other
   const [loading, setLoading] = useState(false);
@@ -45,6 +52,7 @@ export default function CreateScreen({ navigation }) {
   const [dimensions, setdimensions] = useState(
     Dimensions.get("window").width - 16 * 2
   );
+  const id = uuidv4();
   const redyToPost = photo && post.title;
   const redyToDell = photo || post.title;
 
@@ -86,7 +94,7 @@ export default function CreateScreen({ navigation }) {
       keyboardDidHideListener.remove();
       keyboardDidShowListener.remove();
     };
-  }, [photo, loading, post]);
+  }, [photo, loading, post, cameraType]);
 
   const keyboardHide = () => {
     setKeyboardVisible(false);
@@ -125,10 +133,10 @@ export default function CreateScreen({ navigation }) {
 
   const submitForm = () => {
     navigation.navigate("DefaultPostsScreen", {
-      id: "1",
+      id,
       image: photo,
       title: post.title,
-      comments: 8,
+      comments: 3,
       location: ` ${post.region.country}, ${post.region.city}`,
       region: post.location,
       like: 0,
@@ -183,7 +191,8 @@ export default function CreateScreen({ navigation }) {
                     {!photo ? (
                       <Camera
                         skipProcessing={true}
-                        type={type}
+                        flashMode={flashMode}
+                        type={cameraType}
                         onCameraReady={onCameraReady}
                         onMountError={(error) => {
                           154;
@@ -201,6 +210,40 @@ export default function CreateScreen({ navigation }) {
                         >
                           <FontAwesome name="camera" size={20} color="grey" />
                         </TouchableOpacity>
+                        <TouchableOpacity
+                          activeOpacity={0.6}
+                          style={styles.changeCameraBtn}
+                          onPress={() =>
+                            setCameraType(
+                              cameraType === CameraType.front
+                                ? CameraType.back
+                                : CameraType.front
+                            )
+                          }
+                        >
+                          <Foundation name="refresh" size={24} color="white" />
+                        </TouchableOpacity>
+                        {cameraType === CameraType.back && (
+                          <TouchableOpacity
+                            activeOpacity={0.6}
+                            style={styles.flashBtn}
+                            onPress={() => {
+                              setFlashMode(
+                                flashMode === FlashMode.on
+                                  ? FlashMode.off
+                                  : FlashMode.on
+                              );
+                            }}
+                          >
+                            <Ionicons
+                              name="flash"
+                              size={24}
+                              color={
+                                flashMode === FlashMode.on ? "blue" : "white"
+                              }
+                            />
+                          </TouchableOpacity>
+                        )}
                       </Camera>
                     ) : (
                       <View style={{ position: "relative" }}>
@@ -320,6 +363,7 @@ const styles = StyleSheet.create({
     height: 340,
   },
   takePhotoBtn: {
+    opacity: 0.5,
     borderRadius: 50,
     backgroundColor: "#FFFFFF",
     width: 70,
@@ -327,12 +371,27 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  changeCameraBtn: {
+    padding: 3,
+    opacity: 0.6,
+    position: "absolute",
+    right: 7,
+    top: 7,
+  },
+  flashBtn: {
+    padding: 3,
+    opacity: 0.6,
+    position: "absolute",
+    left: 7,
+    top: 7,
+  },
   imageView: {
     height: 340,
     justifyContent: "center",
     alignItems: "center",
   },
   dellPhotoBtn: {
+    opacity: 0.5,
     justifyContent: "center",
     alignItems: "center",
     width: 70,

@@ -28,7 +28,6 @@ export default function DefaultPostsScreen({ navigation, route }) {
   const { name, email } = profile;
   useEffect(() => {
     if (route.params) {
-      console.log(`!`, route.params);
       setPosts((prevState) => [...prevState, route.params]);
     }
     const onChange = () => {

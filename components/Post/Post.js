@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Image, Text, View, TouchableOpacity } from "react-native";
+import { FontAwesome5, Feather } from "@expo/vector-icons";
 
-const commentPin = require("../../assets/icon/comment-pin.png");
 const mapPin = require("../../assets/icon/map-pin.png");
 
 export default function Post({
@@ -26,7 +26,14 @@ export default function Post({
           onPress={() => navigation.navigate("CommentsScreen", { image })}
         >
           <View style={styles.postCommentThmb}>
-            <Image style={styles.postCommentIcon} source={commentPin} />
+            {/* <Image style={styles.postCommentIcon} source={commentPin} /> */}
+            <FontAwesome5
+              style={styles.postCommentIcon}
+              name="comment"
+              size={18}
+              color={comments > 0 ? "orange" : "grey"}
+              // color="orange"
+            />
             <Text style={styles.postCommentNumber}>{comments}</Text>
           </View>
         </TouchableOpacity>
@@ -35,7 +42,12 @@ export default function Post({
           onPress={() => navigation.navigate("MapScreen", region)}
         >
           <View style={styles.postLocationThmb}>
-            <Image style={styles.postLocationIcon} source={mapPin} />
+            <Feather
+              name="map-pin"
+              style={styles.postLocationIcon}
+              size={18}
+              color="black"
+            />
             <Text style={styles.postLocationTitle}>{location}</Text>
           </View>
         </TouchableOpacity>
