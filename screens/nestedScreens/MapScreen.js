@@ -1,21 +1,34 @@
 import { View, Text, StyleSheet } from "react-native";
 import MapView, { Marker } from "react-native-maps";
+import { useContext } from "react";
+import { Context } from "../../context";
+import { useEffect } from "react";
 
-export default function MapScreen() {
+export default function MapScreen({ route }) {
+  const { setCurrentPath } = useContext(Context);
+  const { latitude, longitude } = route.params;
+
+  useEffect(() => {
+    setCurrentPath(route.name);
+
+    return () => {
+      setCurrentPath(null);
+    };
+  }, []);
   return (
     <View style={styles.container}>
       <MapView
         style={styles.map}
         initialRegion={{
-          latitude: 50.5182951,
-          longitude: 30.7849204,
+          latitude,
+          longitude,
           latitudeDelta: 0.001,
           longitudeDelta: 0.006,
         }}
       >
         <Marker
           key={new Date()}
-          coordinate={{ latitude: 50.5182951, longitude: 30.7849204 }}
+          coordinate={{ latitude, longitude }}
           title="photo"
           // description={marker.description}
         />

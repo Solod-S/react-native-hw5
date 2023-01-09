@@ -1,4 +1,8 @@
 import { createStackNavigator } from "@react-navigation/stack";
+
+import { Context } from "./context";
+import { useEffect } from "react";
+import { useState } from "react";
 // import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 // import { MaterialIcons } from "@expo/vector-icons";
@@ -12,37 +16,41 @@ const GeneralStack = createStackNavigator();
 // const MainStack = createStackNavigator();
 
 const useRoute = () => {
+  const [currentPath, setCurrentPath] = useState(null);
+
   return (
     <>
-      <GeneralStack.Navigator initialRouteName="Auth">
-        <GeneralStack.Screen
-          options={{ headerShown: false }}
-          name="Login"
-          component={LoginScreen}
-        />
-        <GeneralStack.Screen
-          options={{ headerShown: false }}
-          name="Registration"
-          component={RegistrationScreen}
-        />
-        <GeneralStack.Screen
-          options={{ headerShown: false }}
-          name="Home"
-          component={Home}
-        ></GeneralStack.Screen>
-        {/* <GeneralStack.Screen
+      <Context.Provider value={{ setCurrentPath, currentPath }}>
+        <GeneralStack.Navigator initialRouteName="Auth">
+          <GeneralStack.Screen
+            options={{ headerShown: false }}
+            name="Login"
+            component={LoginScreen}
+          />
+          <GeneralStack.Screen
+            options={{ headerShown: false }}
+            name="Registration"
+            component={RegistrationScreen}
+          />
+          <GeneralStack.Screen
+            options={{ headerShown: false }}
+            name="Home"
+            component={Home}
+          ></GeneralStack.Screen>
+          {/* <GeneralStack.Screen
           options={{ title: "Комментарии", headerTitleAlign: "center" }}
           name="Comments"
           component={CommentsScreen}
         /> */}
-      </GeneralStack.Navigator>
-      {/* <MainStack.Navigator initialRouteName="Home">
+        </GeneralStack.Navigator>
+        {/* <MainStack.Navigator initialRouteName="Home">
         <MainStack.Screen
           options={{ headerShown: false }}
           name="Home"
           component={Home}
         ></MainStack.Screen>
       </MainStack.Navigator> */}
+      </Context.Provider>
     </>
   );
 };

@@ -1,9 +1,13 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialIcons } from "@expo/vector-icons";
 import { TouchableOpacity, Image } from "react-native";
+import { useContext, useEffect } from "react";
+import { Context } from "../context";
+import { useIsFocused } from "@react-navigation/native";
 
 //screens
 import screens from "../screens";
+
 const { CreateScreen, PostsScreen, ProfileScreen } = screens;
 
 //icons
@@ -13,7 +17,10 @@ const LogOutIcon = require("../assets/icon/log-out.png");
 
 const MainTab = createBottomTabNavigator();
 
-export default function Home({ navigation, route }) {
+export default function Home({ navigation }) {
+  const { currentPath } = useContext(Context);
+  console.log(currentPath);
+
   return (
     <MainTab.Navigator
       screenOptions={{
@@ -30,6 +37,8 @@ export default function Home({ navigation, route }) {
         // syyle={{ display: "none" }}
         name="PostsScreen"
         options={{
+          headerShown: currentPath !== null ? false : true,
+          tabBarVisible: false,
           title: "Публикации",
           headerTitleAlign: "center",
           tabBarIcon: ({ focused, size, color }) => (

@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
+import { useContext } from "react";
+import { Context } from "../../context";
 import {
   Text,
   View,
@@ -22,11 +24,11 @@ const initialState = {
 };
 
 //images
-const img = require("../../assets/images/postImg1.png");
+// const img = require("../../assets/images/postImg1.png");
 const ava1 = require("../../assets/images/avatar2.jpg");
 const ava2 = require("../../assets/images/avatar.png");
 
-export default function CommentsScreen({ navigation }) {
+export default function CommentsScreen({ navigation, route }) {
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const [comment, setComment] = useState(initialState);
   const [dimensions, setdimensions] = useState(
@@ -36,7 +38,10 @@ export default function CommentsScreen({ navigation }) {
     Dimensions.get("window").height
   );
 
+  const { currentPath, setCurrentPath } = useContext(Context);
+
   useEffect(() => {
+    setCurrentPath(route.name);
     const onChange = () => {
       const height = Dimensions.get("window").height;
       const width = Dimensions.get("window").width - 16 * 2;
@@ -59,6 +64,7 @@ export default function CommentsScreen({ navigation }) {
     );
 
     return () => {
+      setCurrentPath(null);
       dimensionsHandler.remove();
       keyboardDidHideListener.remove();
       keyboardDidShowListener.remove();
@@ -76,7 +82,10 @@ export default function CommentsScreen({ navigation }) {
         {!isKeyboardVisible && (
           <>
             <View style={styles.postImgThmb}>
-              <Image source={img} style={styles.postImg} />
+              <Image
+                source={{ uri: route.params.image, height: 300, width: "100%" }}
+                style={styles.postImg}
+              />
             </View>
           </>
         )}

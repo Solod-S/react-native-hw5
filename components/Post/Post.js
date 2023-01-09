@@ -4,36 +4,43 @@ import { StyleSheet, Image, Text, View, TouchableOpacity } from "react-native";
 const commentPin = require("../../assets/icon/comment-pin.png");
 const mapPin = require("../../assets/icon/map-pin.png");
 
-export default function MainPost({
+export default function Post({
   navigation,
   title,
   image,
   comments,
   location,
+  region,
 }) {
   return (
-    <TouchableOpacity
-      activeOpacity={0.6}
-      style={styles.post}
-      onPress={() => navigation.navigate("CommentsScreen")}
-    >
+    <View style={styles.post}>
       <Image
         source={{ uri: image, height: 300, width: "100%" }}
         style={styles.postImg}
       />
+
       <Text style={styles.postTitle}>{title}</Text>
       <View style={styles.postFooter}>
-        <View style={styles.postCommentThmb}>
-          <Image style={styles.postCommentIcon} source={commentPin} />
-          <Text style={styles.postCommentNumber}>{comments}</Text>
-        </View>
-
-        <View style={styles.postLocationThmb}>
-          <Image style={styles.postLocationIcon} source={mapPin} />
-          <Text style={styles.postLocationTitle}>{location}</Text>
-        </View>
+        <TouchableOpacity
+          activeOpacity={0.6}
+          onPress={() => navigation.navigate("CommentsScreen", { image })}
+        >
+          <View style={styles.postCommentThmb}>
+            <Image style={styles.postCommentIcon} source={commentPin} />
+            <Text style={styles.postCommentNumber}>{comments}</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.6}
+          onPress={() => navigation.navigate("MapScreen", region)}
+        >
+          <View style={styles.postLocationThmb}>
+            <Image style={styles.postLocationIcon} source={mapPin} />
+            <Text style={styles.postLocationTitle}>{location}</Text>
+          </View>
+        </TouchableOpacity>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 }
 

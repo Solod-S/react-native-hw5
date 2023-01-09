@@ -23,13 +23,12 @@ import {
 //stateSchema
 const initialState = {
   title: "",
-  location: "",
+  location: null,
+  region: {},
 };
 
 export default function CreateScreen({ navigation }) {
   //location
-  const [location, setLocation] = useState({});
-  const [region, setregion] = useState({});
   const [permission, requestPermission] = Camera.useCameraPermissions();
 
   //camera
@@ -41,17 +40,15 @@ export default function CreateScreen({ navigation }) {
 
   //other
   const [loading, setLoading] = useState(false);
-
   const [post, setPost] = useState(initialState);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const [dimensions, setdimensions] = useState(
     Dimensions.get("window").width - 16 * 2
   );
-  const redyToPost = photo && post.location && post.title;
-  const redyToDell = photo || post.location || post.title;
+  const redyToPost = photo && post.title;
+  const redyToDell = photo || post.title;
 
   useEffect(() => {
-    console.log(`region`, region);
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
@@ -89,7 +86,7 @@ export default function CreateScreen({ navigation }) {
       keyboardDidHideListener.remove();
       keyboardDidShowListener.remove();
     };
-  }, [photo, loading, region]);
+  }, [photo, loading, post]);
 
   const keyboardHide = () => {
     setKeyboardVisible(false);
@@ -108,27 +105,19 @@ export default function CreateScreen({ navigation }) {
 
     const takeLocation = async () => {
       let location = await Location.getCurrentPositionAsync({});
-      setLocation(location.coords);
-
+      setPost((prevState) => ({ ...prevState, location: location.coords }));
       const regionData = await Location.reverseGeocodeAsync({
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
       });
-      // setregion({
-      //   city: regionData.city,
-      //   country: regionData.country,
-      //   isoCountryCode: regionData.isoCountryCode,
-      // });
-      setregion(regionData[0]);
-
+      setPost((prevState) => ({ ...prevState, region: regionData[0] }));
       setLoading(false);
     };
+
     try {
       setLoading(true);
       makePhoto();
       takeLocation();
-      // getLocation();
-      console.log(`loading`, loading);
     } catch (error) {
       console.log(error);
     }
@@ -140,21 +129,17 @@ export default function CreateScreen({ navigation }) {
       image: photo,
       title: post.title,
       comments: 8,
-      location: post.location,
-      locationCords: location,
+      location: ` ${post.region.country}, ${post.region.city}`,
+      region: post.location,
       like: 0,
     });
 
     setPhoto(null);
-    setregion({});
-    setLocation(null);
     setPost(initialState);
   };
 
   const onDell = () => {
     setPhoto(null);
-    setLocation(null);
-    setregion({});
     setPost(initialState);
     navigation.navigate("DefaultPostsScreen");
   };
@@ -228,7 +213,7 @@ export default function CreateScreen({ navigation }) {
                             style={styles.dellPhotoBtn}
                             onPress={() => {
                               setPhoto(null);
-                              setregion({});
+                              setPost(initialState);
                             }}
                           >
                             <Foundation name="trash" size={20} color="grey" />
@@ -267,26 +252,9 @@ export default function CreateScreen({ navigation }) {
                 />
               </View>
               <View style={{ marginBottom: 32, position: "relative" }}>
-                {/* <TextInput
-                  placeholder={
-                    region.length > 0
-                      ? `${region.country},  ${region.city}`
-                      : "Местность"
-                  }
-                  value={post.location}
-                  style={styles.input}
-                  textAlign={"left"}
-                  onFocus={() => setKeyboardVisible(true)}
-                  onChangeText={(value) =>
-                    setPost((prevState) => ({
-                      ...prevState,
-                      location: value,
-                    }))
-                  }
-                /> */}
-                {region && (
+                {post.region.country !== undefined && (
                   <Text>
-                    {region.country}, {region.city}
+                    {post.region.country + ","} {post.region.city}
                   </Text>
                 )}
               </View>
@@ -300,7 +268,6 @@ export default function CreateScreen({ navigation }) {
                 activeOpacity={0.6}
                 style={{
                   ...styles.subBtn,
-                  // borderColor: redyToPost? "transparent" : ,
                   backgroundColor: redyToPost ? "#FF6C00" : "#F6F6F6",
                 }}
                 onPress={() => submitForm()}

@@ -5,9 +5,7 @@ import {
   StyleSheet,
   Image,
   Dimensions,
-  ScrollView,
   FlatList,
-  TouchableOpacity,
 } from "react-native";
 
 const profile = {
@@ -16,7 +14,7 @@ const profile = {
 };
 
 //components
-import MainPost from "../../components/MainPost/MainPost";
+import Post from "../../components/Post/Post";
 
 //images
 const ava = require("../../assets/images/avatar.png");
@@ -28,9 +26,9 @@ export default function DefaultPostsScreen({ navigation, route }) {
   );
 
   const { name, email } = profile;
-
   useEffect(() => {
     if (route.params) {
+      console.log(`!`, route.params);
       setPosts((prevState) => [...prevState, route.params]);
     }
     const onChange = () => {
@@ -60,15 +58,16 @@ export default function DefaultPostsScreen({ navigation, route }) {
           showsVerticalScrollIndicator={false}
           keyExtractor={(item, indx) => indx.toString()}
           renderItem={({ item }) => {
-            const { id, image, title, comments, location } = item;
+            const { id, image, title, comments, location, region } = item;
             return (
-              <MainPost
+              <Post
                 navigation={navigation}
                 key={id}
                 title={title}
                 image={image}
                 comments={comments}
                 location={location}
+                region={region}
               />
             );
           }}
@@ -77,7 +76,7 @@ export default function DefaultPostsScreen({ navigation, route }) {
       {/* <ScrollView showsVerticalScrollIndicator={false}>
         {posts &&
           posts.map(({ id, image, title, comments, location }) => (
-            <MainPost
+            <Post
               navigation={navigation}
               key={id}
               title={title}

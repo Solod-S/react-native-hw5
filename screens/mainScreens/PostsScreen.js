@@ -5,12 +5,16 @@ import {
   CommentsScreen,
 } from "../nestedScreens";
 import { TouchableOpacity, Image } from "react-native";
+import { useContext } from "react";
+import { Context } from "../../context";
 
 const NestedScreen = createStackNavigator();
 
 const backIcon = require("../../assets/icon/arrow-left.png");
 
-export default function PostScreen({}) {
+export default function PostScreen({ navigation }) {
+  const { currentPath, setCurrentPath } = useContext(Context);
+
   return (
     <NestedScreen.Navigator>
       <NestedScreen.Screen
@@ -28,7 +32,10 @@ export default function PostScreen({}) {
             <TouchableOpacity
               activeOpacity={0.6}
               style={{ padding: 10 }}
-              onPress={() => navigation.navigate("PostsScreen")}
+              onPress={() => {
+                setCurrentPath(null);
+                navigation.navigate("DefaultPostsScreen");
+              }}
             >
               <Image source={backIcon} style={{ marginLeft: 16 }} />
             </TouchableOpacity>
@@ -38,7 +45,23 @@ export default function PostScreen({}) {
       />
       <NestedScreen.Screen
         name="MapScreen"
-        options={{ headerShown: false }}
+        options={{
+          title: "Карта",
+          headerTitleAlign: "center",
+          // headerShown: false,
+          headerLeft: () => (
+            <TouchableOpacity
+              activeOpacity={0.6}
+              style={{ padding: 10 }}
+              onPress={() => {
+                setCurrentPath(null);
+                navigation.navigate("DefaultPostsScreen");
+              }}
+            >
+              <Image source={backIcon} style={{ marginLeft: 16 }} />
+            </TouchableOpacity>
+          ),
+        }}
         component={MapScreen}
       />
     </NestedScreen.Navigator>
